@@ -33,6 +33,52 @@
 
 static int g_backup_bin_index = 0;
 
+static void CreateDefaultFolderTreeAndConfig(CHAR MountDrive)
+{
+    CHAR szPath[MAX_PATH];
+    HANDLE hFile;
+    DWORD dwWritten;
+    const char szJson[] = "{\r\n"
+                          "    \"control\": [\r\n"
+                          "        { \"VTOY_DEFAULT_MENU_MODE\": \"1\" },\r\n"
+                          "        { \"VTOY_TREE_VIEW_MENU_STYLE\": \"1\" }\r\n"
+                          "    ]\r\n"
+                          "}\r\n";
+
+    if (MountDrive < 'A' || MountDrive > 'Z')
+    {
+        return;
+    }
+
+    Log("Configuring default folder tree navigation for %C: ...", MountDrive);
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\ventoy", MountDrive);
+    CreateDirectoryA(szPath, NULL);
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\ventoy\\ventoy.json", MountDrive);
+    hFile = CreateFileA(szPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
+    {
+        WriteFile(hFile, szJson, (DWORD)strlen(szJson), &dwWritten, NULL);
+        CloseHandle(hFile);
+        Log("Created %s (Default Menu Mode: TreeView/Carpetas)", szPath);
+    }
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\Windows", MountDrive);
+    CreateDirectoryA(szPath, NULL);
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\Linux", MountDrive);
+    CreateDirectoryA(szPath, NULL);
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\Herramientas", MountDrive);
+    CreateDirectoryA(szPath, NULL);
+
+    sprintf_s(szPath, sizeof(szPath), "%C:\\ISOs", MountDrive);
+    CreateDirectoryA(szPath, NULL);
+
+    Log("Organized folders (Windows, Linux, Herramientas, ISOs) created on %C:\\", MountDrive);
+}
+
 
 static BOOL WriteDataToPhyDisk(HANDLE hDrive, UINT64 Offset, VOID *buffer, DWORD len)
 {
@@ -2305,6 +2351,25 @@ End:
                 }
 
                 CHECK_CLOSE_HANDLE(hDrive);
+            }
+        }
+
+        if (state && MountDrive >= 'A' && MountDrive <= 'Z')
+        {
+            CreateDefaultFolderTreeAndConfig(MountDrive);
+        }
+        else
+        {
+            memset(DriveLetters, 0, sizeof(DriveLetters));
+            Sleep(1000);
+            GetLettersBelongPhyDrive(pPhyDrive->PhyDrive, DriveLetters, sizeof(DriveLetters));
+            for (i = 0; i < sizeof(DriveLetters) && DriveLetters[i]; i++)
+            {
+                if (!IsVentoyLogicalDrive(DriveLetters[i]))
+                {
+                    CreateDefaultFolderTreeAndConfig(DriveLetters[i]);
+                    break;
+                }
             }
         }
 

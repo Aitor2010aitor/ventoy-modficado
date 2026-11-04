@@ -63,7 +63,7 @@ initrd_info *g_initrd_img_list = NULL;
 initrd_info *g_initrd_img_tail = NULL;
 int g_initrd_img_count = 0;
 int g_valid_initrd_count = 0;
-int g_default_menu_mode = 0;
+int g_default_menu_mode = 1;
 int g_filt_dot_underscore_file = 0;
 int g_filt_trash_dir = 1;
 int g_sort_case_sensitive = 0;
@@ -2928,9 +2928,9 @@ static grub_err_t ventoy_cmd_list_img(grub_extcmd_context_t ctxt, int argc, char
     ventoy_set_env("vtoy_iso_fs", fs->name);
 
     strdata = ventoy_get_env("VTOY_DEFAULT_MENU_MODE");
-    if (strdata && strdata[0] == '1')
+    if (strdata && strdata[0] == '0')
     {
-        g_default_menu_mode = 1;
+        g_default_menu_mode = 0;
     }
 
     grub_memset(&g_img_iterator_head, 0, sizeof(g_img_iterator_head));
