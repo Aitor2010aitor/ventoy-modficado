@@ -12,6 +12,11 @@
 ### ¿Qué es este proyecto y por qué está modificado?
 En la versión oficial de Ventoy, al meter decenas de sistemas operativos e ISOs en el USB, todas aparecen juntas en una lista plana interminable y desordenada. Además, para navegar por carpetas hay que pulsar combinaciones de teclas cada vez que arrancas.
 
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f818d505-d541-4d84-893e-0e433af5c7d3" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c9f19d20-f615-44bc-92f7-f445208d52fa" />
+
+
 **Esta versión modificada resuelve eso por completo:**
 1. **Modo Árbol / Carpetas Activo por Defecto (`TreeView`)**:
    - Al encender el ordenador con el USB, **arranca directamente en modo carpetas**.
